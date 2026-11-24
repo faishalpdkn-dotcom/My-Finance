@@ -1,59 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# My Finance - Aplikasi Pencatatan Keuangan Pribadi
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Tugas Besar Implementasi Perangkat Lunak (IPL) - Kelompok 2
+Program Studi Teknik Informatika, Universitas Jenderal Achmad Yani (2026).
 
-## About Laravel
+Implementasi dari dokumen **SRS** dan **SDD** My Finance menggunakan **Laravel 12** (PHP, Blade, MySQL/SQLite).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| NIM | Nama |
+|---|---|
+| 2450081072 | Kevin Cahyawiguna |
+| 2450081074 | Muchammad Rizal Sobari |
+| 2450081077 | Muh. Zacky Yasir Syifa |
+| 2450081080 | Muhammad Farielyabi Ghani |
+| 2450081089 | Faishal Akbar Widyatna |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Fitur (sesuai SRS F01-F10)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Fitur | Lokasi kode utama |
+|---|---|
+| Registrasi, login, logout (F09) | `app/Http/Controllers/Auth/*`, `resources/views/auth/*` |
+| Dashboard keuangan per bulan (F01): pilih bulan, angka hanya bulan terpilih | `DashboardController`, `resources/views/dashboard.blade.php` |
+| Pencatatan pemasukan & pengeluaran (F02, F03) | `TransactionController`, `TransactionRequest` |
+| Riwayat, edit, hapus, filter transaksi (F04-F06) | `TransactionController`, `resources/views/transactions/*` |
+| Laporan keuangan + grafik bulanan (F07) | `ReportController`, `app/Services/ReportService.php` |
+| Anggaran bulanan (F08) | `BudgetController`, `app/Models/Budget.php` |
+| Target tabungan (F10): setoran mengurangi saldo (dicatat sebagai pengeluaran kategori Tabungan) | `SavingsGoalController`, `app/Models/SavingsGoal.php` |
+| Kategori transaksi per pengguna | `CategoryController` |
 
-## Learning Laravel
+Aturan keamanan dari SRS/SDD yang diterapkan: password di-hash, semua halaman pribadi wajib login, setiap operasi data memeriksa kepemilikan (403 jika bukan milik pengguna), query memakai Eloquent (parameterized), input divalidasi, tampilan berbahasa Indonesia dengan format Rupiah dan responsif (sidebar desktop, menu ringkas di mobile).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Kebutuhan
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.2+ (ekstensi: `pdo_sqlite` atau `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `ctype`, `fileinfo`)
+- Composer 2
+- Tidak perlu Node.js / npm (CSS dan JS sudah ada di `public/`)
 
-## Laravel Sponsors
+## Menjalankan (cara cepat, SQLite)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer setup     # install, buat .env, buat database sqlite, generate key, migrate + seed
+composer dev       # atau: php artisan serve
+```
 
-### Premium Partners
+Buka http://localhost:8000
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Akun demo (dari seeder): **demo@myfinance.test** / **password123**
 
-## Contributing
+### Cara manual
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+composer install
+cp .env.example .env            # Windows: copy .env.example .env
+touch database/database.sqlite  # Windows: type nul > database\database.sqlite
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
+```
 
-## Code of Conduct
+### Memakai MySQL (XAMPP)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Jalankan Apache dan MySQL di XAMPP, lalu buat database kosong `my_finance` lewat phpMyAdmin.
+2. Di `.env`, ganti `DB_CONNECTION=sqlite` dengan:
 
-## Security Vulnerabilities
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=my_finance
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+3. Jalankan `php artisan migrate --seed`.
 
-## License
+## Pengujian
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+composer test      # atau: php artisan test
+```
+
+Mencakup autentikasi, CRUD transaksi, validasi, kepemilikan data, filter, laporan, anggaran, dan target tabungan.
+
+## Struktur database (ERD pada SDD Bab IV)
+
+`users` 1-N `categories`, `transactions`, `budgets`, `savings_goals`; `categories` 1-N `transactions`, `budgets`.
+Nominal memakai `DECIMAL(15,2)`; periode anggaran disimpan sebagai `YYYY-MM`.
+
+## Panduan Git: commit satu per satu tiap anggota
+
+Repo ini sudah berisi versi lengkap. Agar riwayat commit mencerminkan kontribusi tiap orang, salah satu cara adalah pembagian berikut (urutan commit penting karena ada ketergantungan):
+
+| Urutan | Anggota (usulan) | Isi commit | File utama |
+|---|---|---|---|
+| 1 | Ketua / siapa saja | Inisialisasi project Laravel, konfigurasi | `composer.json`, `.env.example`, `bootstrap/app.php`, `config/`, `artisan`, `public/index.php`, `storage/`, `.gitignore` |
+| 2 | Kevin | Database: migration, model, seeder | `database/migrations/*`, `app/Models/*`, `database/seeders/*` |
+| 3 | Kevin | Registrasi, login, logout + tampilan tamu | `Auth/*Controller`, `views/auth/*`, `views/layouts/guest`, `views/welcome`, `public/css`, `public/js` |
+| 4 | Rizal | Transaksi (tambah, edit, hapus, riwayat, filter) + kategori | `TransactionController`, `TransactionRequest`, `CategoryController`, `views/transactions/*`, `views/categories/*` |
+| 5 | Zacky | Dashboard + layout aplikasi + laporan | `DashboardController`, `ReportController`, `ReportService`, `views/layouts/app`, `views/dashboard`, `views/reports/*`, `app/Support/Format.php` |
+| 6 | Farielyabi | Anggaran bulanan | `BudgetController`, `views/budgets/*` |
+| 7 | Faishal | Target tabungan + pengujian + dokumentasi | `SavingsGoalController`, `views/goals/*`, `tests/*`, `README.md`, `lang/id/*` |
+
+Catatan: `routes/web.php` mereferensikan semua controller. Jika ingin aplikasi tetap bisa dijalankan di setiap commit, tambahkan route sedikit demi sedikit seiring commit masing-masing anggota (atau commit `routes/web.php` sebagai bagian dari commit terakhir dan jalankan aplikasi setelah semua selesai).
+
+Perintah dasar tiap anggota:
+
+```bash
+git clone <url-repo>
+git checkout -b fitur/<nama-fitur>
+git add <file-bagian-anda>
+git commit -m "feat: <deskripsi singkat>"
+git push -u origin fitur/<nama-fitur>
+# lalu buat Pull Request ke branch main
+```
+
+File yang **tidak** boleh di-commit (sudah ada di `.gitignore`): `.env`, `vendor/`, `database/*.sqlite`, `node_modules/`.
